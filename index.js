@@ -4,6 +4,7 @@ const app = express()
 
 // LOL do not forget this
 app.use(express.json())
+app.use(morgan('tiny'))
 
 let persons = [
     {

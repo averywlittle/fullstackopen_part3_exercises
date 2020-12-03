@@ -19,7 +19,8 @@
   },
   "homepage": "https://github.com/averywlittle/fullstackopen_part3_exercises#readme",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "morgan": "^1.10.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.6"

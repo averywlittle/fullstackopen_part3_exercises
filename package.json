@@ -1,0 +1,23 @@
+{
+  "name": "fullstackopen_part3_exercises",
+  "version": "1.0.0",
+  "description": "This repo was made for the Full Stack Open Part 3 exercises.\r The node app being developed during these exercises will eventually be deployed to Heroku.\r I was warned that it's easier to do this from the root of a project repo, so the exercises will live here.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/averywlittle/fullstackopen_part3_exercises.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/averywlittle/fullstackopen_part3_exercises/issues"
+  },
+  "homepage": "https://github.com/averywlittle/fullstackopen_part3_exercises#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}

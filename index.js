@@ -1,6 +1,9 @@
 const express = require('express');
 const app = express()
 
+// LOL do not forget this
+app.use(express.json())
+
 let persons = [
     {
         id: 1,
@@ -23,6 +26,13 @@ let persons = [
         number: "578-3056"
     }
 ]
+
+const generateId = () => {
+    const maxId = persons.length > 0
+        ? Math.max(...persons.map(person => person.id))
+        : 0
+    return maxId + 1
+}
 
 // Using express means we don't have to use stringify
 app.get('/', (request, response) => {
@@ -55,6 +65,41 @@ app.delete('/api/persons/:id', (request, response) => {
     persons = persons.filter(person => person.id !== id)
 
     response.status(204).end()
+})
+
+// Create a person endpoint
+app.post('/api/persons', (request, response) => {
+
+    const body = request.body
+
+    console.log(body)
+
+    const name = body.name
+    const number = body.number
+
+    if (!name || !number) {
+        return response.status(400).json({
+            error: 'name or number missing'
+        })
+    }
+    
+    const existingPerson = persons.find(person => person.name === name)
+    
+    if (existingPerson) {
+        return response.status(409).json({
+            error: 'name must be unique'
+        })
+    }
+
+    const person = {
+        id: generateId(),
+        name: name,
+        number: number,
+    }
+
+    persons = persons.concat(person)
+
+    response.json(person)
 })
 
 // Info page

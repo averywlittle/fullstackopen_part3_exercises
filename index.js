@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express');
 const morgan = require('morgan')
 const cors = require('cors')
@@ -5,15 +6,16 @@ const app = express()
 
 app.use(cors())
 app.use(express.static('build'))
-
 // LOL do not forget this
 app.use(express.json())
-
 // Custom body token for morgan logging
 morgan.token('body', function (req, res) { return JSON.stringify(req.body) })
 
 // Couldn't figure out how to supplement 'tiny' format, and had to use built in tokens
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
+
+// Models
+const Person = require('./models/person')
 
 let persons = [
     {
@@ -52,21 +54,18 @@ app.get('/', (request, response) => {
 
 // Get all endpoint
 app.get('/api/persons', (request, response) => {
-    response.json(persons)
+    
+    Person.find({}).then(persons => {
+        response.json(persons)
+    })
 })
 
 // Get 1 person endpoint
 // Parameters come in as strings and need to be checked for correct format :)
 app.get('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    const person = persons.find(person => person.id === id)
-    
-    if (person) {
+    Person.findById(request.params.id).then(person => {
         response.json(person)
-    }
-    else {
-        response.status(404).end()
-    }
+    })
 })
 
 // Delete 1 person endpoint
@@ -82,8 +81,6 @@ app.delete('/api/persons/:id', (request, response) => {
 app.post('/api/persons', (request, response) => {
 
     const body = request.body
-
-    console.log(body)
 
     const name = body.name
     const number = body.number
@@ -102,15 +99,15 @@ app.post('/api/persons', (request, response) => {
         })
     }
 
-    const person = {
-        id: generateId(),
+    const person = new Person({
         name: name,
         number: number,
-    }
+        date: new Date(),
+    })
 
-    persons = persons.concat(person)
-
-    response.json(person)
+    person.save().then(savedPerson => {
+        response.json(savedPerson)
+    })
 })
 
 // Info page
@@ -121,6 +118,6 @@ app.get('/info', (request, response) => {
                     <p>${date}</p>`)
 })
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT)
 console.log(`Server running on port ${PORT}`)

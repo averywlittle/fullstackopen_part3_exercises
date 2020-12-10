@@ -1,5 +1,5 @@
 require('dotenv').config()
-const express = require('express');
+const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
 const app = express()
@@ -9,7 +9,7 @@ app.use(express.static('build'))
 // LOL do not forget this
 app.use(express.json())
 // Custom body token for morgan logging
-morgan.token('body', function (req, res) { return JSON.stringify(req.body) })
+morgan.token('body', function (req) { return JSON.stringify(req.body) })
 
 // Couldn't figure out how to supplement 'tiny' format, and had to use built in tokens
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
@@ -46,7 +46,7 @@ app.get('/api/persons/:id', (request, response, next) => {
 // Tested with postman
 app.delete('/api/persons/:id', (request, response, next) => {
     Person.findByIdAndRemove(request.params.id)
-        .then(result => {
+        .then(() => {
             response.status(204).end()
         })
         .catch(error => next(error))
@@ -59,24 +59,6 @@ app.post('/api/persons', (request, response, next) => {
 
     const name = body.name
     const number = body.number
-
-    // Replaced by Mongoose validation
-        // if (!name || !number) {
-        //     return response.status(400).json({
-        //         error: 'name or number missing'
-        //     })
-        // }
-    
-    // Replaced by Mongoose unique validator
-        // Person.findOne({ name: name }).exec()
-        //     .then(existingPerson => {
-                
-        //         if (existingPerson) {
-        //             return response.status(409).json({
-        //                 error: 'name must be unique'
-        //             })
-        //         }
-        //     })    
 
     const person = new Person({
         name: name,
@@ -132,7 +114,7 @@ const errorHandler = (error, request, response, next) => {
     console.error(error.message)
   
     if (error.name === 'CastError') {
-      return response.status(400).send({ error: 'malformatted id' })
+        return response.status(400).send({ error: 'malformatted id' })
     } else if (error.name === 'ValidationError') {
         return response.status(400).json({ error: error.message })
     }
